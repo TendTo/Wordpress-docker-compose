@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  wordpress:
+    build:
+      context: ./docker
+      args:
+          WORDPRESS_VERSION: ${WORDPRESS_VERSION:-5.9.1-php8.0-apache}
+    image: wordpress-debug:${WORDPRESS_VERSION:-5.9.1-php8.0-apache}
+    container_name: wordpress-debug
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wp_}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-mysql}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-user}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-password}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG-''}
+      WORDPRESS_DEBUG_LOG: ${WORDPRESS_DEBUG_LOG-''}
+      WORDPRESS_DEBUG_DISPLAY: ${WORDPRESS_DEBUG_DISPLAY-''}
+    volumes:
+      - wordpress:/var/www/html
+      - ./themes:/var/www/html/wp-content/themes/
+      - ./plugins:/var/www/html/wp-content/plugins/
+    restart: always
+
+  mysql:
+    image: mysql:${MYSQL_VERSION:-latest}
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD:-no}
+    volumes:
+      - db:/var/lib/mysq
+    restart: always
+
+volumes:
+  wordpress:
+  db:

@@ -1,0 +1,12 @@
+# VsCode
+.vscode/
+
+# Configurazione locale per customizzare lo stack
+.env
+
+# Plugins e temi di Wordpress
+plugins/*
+themes/*
+
+# Mantiene le cartelle plugins e themes vuote
+!.gitkeep
